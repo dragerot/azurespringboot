@@ -49,6 +49,8 @@ public class GreetingController {
 
     @RequestMapping("/rest/greeting/delete/{id}")
     public void deleteGreetingAtIndex(@PathVariable("id") long id) {
-        greetingService.deleteGreetingAtIndex(id);
+        Greeting val=greetingService.getGreetings().get((int)id);
+        if(val!=null) greetingService.getGreetings().remove(val);
+        //greetingService.deleteGreetingAtIndex(id);
     }
 }
