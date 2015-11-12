@@ -5,17 +5,35 @@ buildscript {
         maven { url "http://repo.spring.io/milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.1.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath('se.transmode.gradle:gradle-docker:1.2')
     }
 }
 
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'docker'
 
 jar {
-    baseName = 'myproject'
+    baseName = 'springboot'
     version =  '0.0.1-SNAPSHOT'
 }
+
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = true
+    applicationName = jar.baseName
+    dockerfile = file('src/main/docker-dir/Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+}
+
+
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
@@ -25,21 +43,21 @@ configurations {
 repositories {
     jcenter()
     maven { url "http://repo.spring.io/snapshot" }
-    maven { url "http://repo.spring.io/milestone" }
+maven { url "http://repo.spring.io/milestone" }
 }
 
 dependencies {
    // compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-web:1.2.1.RELEASE")
     compile("org.springframework.boot:spring-boot-starter-jetty:1.2.1.RELEASE")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
 
 
 }
 
-applicationDefaultJvmArgs = [
-        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-]
+
+//applicationDefaultJvmArgs = [ "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"]
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.0'
