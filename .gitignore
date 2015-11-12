@@ -7,7 +7,7 @@
 #Gradle
 .gradletasknamecache
 .gradle/
-build/
+build
 bin/
 
 # Java class files
